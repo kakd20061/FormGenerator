@@ -1,19 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Plugin.BLE;
+using Plugin.BLE.Abstractions.Contracts;
+using Plugin.BLE.Abstractions.Exceptions;
 
 namespace ESP32FormGenerator.Services
 {
     public static class JsonService
     {
-        public async static Task<string> GetFile(string path)
+        public static List<IDevice> GetDevices()
         {
-            using (var http = new HttpClient())
+            var adapter = CrossBluetoothLE.Current.Adapter;
+            var devices = adapter.GetSystemConnectedOrPairedDevices().ToList();
+            return devices;
+        }
+
+        public static async Task Connect(IDevice device)
+        {
+            var adapter = CrossBluetoothLE.Current.Adapter;
+
+            try
             {
-                var response = await http.GetStringAsync(path);
-                return response;
+                await adapter.ConnectToDeviceAsync(device);
+            }
+            catch (DeviceConnectionException e)
+            {
+                // ... could not connect to device
             }
         }
+
 
     }
 }

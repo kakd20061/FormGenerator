@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Newtonsoft.Json;
+using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -14,18 +15,17 @@ namespace ESP32FormGenerator
 {
     public partial class MainPage : TabbedPage
     {
-        public MainPage()
+        public MainPage(IDevice device)
         {
             InitializeComponent();
-
-            var t = Task.Run(() => CreateFormsFromJson());
-            t.Wait();
+            esp32Address.Text = $"{device.Name}: {device.NativeDevice}";
+            //var t = Task.Run(() => CreateFormsFromJson());
+            //t.Wait();
         }
-
         public async Task CreateFormsFromJson()
         {
-            var json = await JsonService.GetFile(@"https://raw.githubusercontent.com/kakd20061/Esp32PublicFiles/main/data.json");
-
+            //var json = await JsonService.GetFile(@"https://raw.githubusercontent.com/kakd20061/Esp32PublicFiles/main/data.json");
+            var json = "{}";
             var forms = JsonConvert.DeserializeObject<Forms>(json);
             foreach (var form in forms.forms)
             {
@@ -39,7 +39,7 @@ namespace ESP32FormGenerator
 
                 var stackLayout = new StackLayout
                 {
-                    
+
                 };
                 scrollView.Content = stackLayout;
                 tappedPage.Content = scrollView;
@@ -52,10 +52,11 @@ namespace ESP32FormGenerator
                     switch (member.Type)
                     {
                         case "text":
-                            var entry = new Entry {
+                            var entry = new Entry
+                            {
                                 Placeholder = member.Label,
                                 Text = member.Value.ToString(),
-                                Margin = new Thickness(0,20),
+                                Margin = new Thickness(0, 20),
                             };
 
                             stackLayout.Children.Add(entry);
@@ -186,7 +187,7 @@ namespace ESP32FormGenerator
                 };
                 foreach (var btn in form.Button)
                 {
-                    switch(btn.Type)
+                    switch (btn.Type)
                     {
                         case "save":
 
