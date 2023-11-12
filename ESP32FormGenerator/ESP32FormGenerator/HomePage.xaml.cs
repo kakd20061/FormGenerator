@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Android.Bluetooth;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Newtonsoft.Json;
@@ -15,13 +16,14 @@ namespace ESP32FormGenerator
 {
     public partial class HomePage : ContentPage
     {
-        private List<IDevice> devices;
+        private ICollection<BluetoothDevice> devices;
+
         public HomePage()
         {
             InitializeComponent();
-            SetPicker(JsonService.GetDevices());
+            SetPicker(JsonService.GetBondedDevices());
         }
-        public void SetPicker(List<IDevice> devices)
+        public void SetPicker(ICollection<BluetoothDevice> devices)
         {
             var resultList = new List<string>();
             this.devices = devices;

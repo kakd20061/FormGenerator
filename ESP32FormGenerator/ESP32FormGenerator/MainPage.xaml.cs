@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Android.Bluetooth;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Newtonsoft.Json;
@@ -15,17 +16,16 @@ namespace ESP32FormGenerator
 {
     public partial class MainPage : TabbedPage
     {
-        public MainPage(IDevice device)
+        public MainPage(BluetoothDevice device)
         {
             InitializeComponent();
-            esp32Address.Text = $"{device.Name}: {device.NativeDevice}";
-            //var t = Task.Run(() => CreateFormsFromJson());
-            //t.Wait();
+            esp32Address.Text = $"{device.Name}: {device.Address}";
+            var t = Task.Run(() => CreateFormsFromJson());
+            t.Wait();
         }
         public async Task CreateFormsFromJson()
         {
-            //var json = await JsonService.GetFile(@"https://raw.githubusercontent.com/kakd20061/Esp32PublicFiles/main/data.json");
-            var json = "{}";
+            var json = Encoding.UTF8.GetString(await JsonService.BluetoothInput());
             var forms = JsonConvert.DeserializeObject<Forms>(json);
             foreach (var form in forms.forms)
             {
@@ -63,7 +63,7 @@ namespace ESP32FormGenerator
 
 
                             break;
-                        case "switch":
+                        case "binswitch":
                             var sl = new StackLayout
                             {
                                 Orientation = StackOrientation.Horizontal,
@@ -92,7 +92,7 @@ namespace ESP32FormGenerator
                             break;
 
                         case "select":
-
+                            var test = member.Value;
                             var values = JsonConvert.DeserializeObject<ItemsList>("{" + $"value:{member.Value}" + "}");
 
                             var picker = new Picker
@@ -128,7 +128,7 @@ namespace ESP32FormGenerator
                                     Spans = {
                                         new Span
                                         {
-                                            Text = $"{member.Label}: ",
+                                            Text = $"{member.Value}: ",
                                             FontSize = 20,
                                             ForegroundColor = Color.Black
                                         },

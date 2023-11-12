@@ -1,85 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Android.Bluetooth;
+using Android.Util;
+using Android.Widget;
+using Java.Util;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.Exceptions;
 using Plugin.BLE.Abstractions.Extensions;
 using Xamarin.Forms;
+using static Android.Bluetooth.BluetoothClass;
 
 namespace ESP32FormGenerator.Services
 {
     public static class JsonService
     {
+        private static BluetoothDevice _device;
+        private static BluetoothSocket _socket;
 
-        private static ICharacteristic characteristic = null;
-
-        public static List<IDevice> GetDevices()
+        public static ICollection<BluetoothDevice> GetBondedDevices()
         {
-            var adapter = CrossBluetoothLE.Current.Adapter;
-            var devices = adapter.GetSystemConnectedOrPairedDevices().ToList();
-            return devices;
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+            if (bluetoothAdapter == null || !bluetoothAdapter.IsEnabled)
+            {
+                return null;
+            }
+
+            return bluetoothAdapter.BondedDevices; //Urzadzenia do Selecta
         }
 
-        public static async Task Connect(IDevice device)
+        public static async Task Connect(BluetoothDevice device)
         {
-            var adapter = CrossBluetoothLE.Current.Adapter;
-            await adapter.DiscoverDeviceAsync(device.Id);
+            _device = device;
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+            if (bluetoothAdapter == null || !bluetoothAdapter.IsEnabled)
+            {
+                return;
+            }
+
             try
             {
-                await adapter.ConnectToDeviceAsync(device);
+                _socket = device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
+                await _socket.ConnectAsync();
 
-                
             }
-            catch (DeviceConnectionException e)
+            catch (Exception ex)
             {
-                await Console.Out.WriteLineAsync("Could not connect to device");
+                Log.Error("CONNECTION", ex.Message);
+                await Console.Out.WriteLineAsync("ERROR " + ex.Message);
             }
 
+            await Task.Delay(2000);
+        }
+
+
+        public static async void BluetoothCommand(string message)
+        {
             try
             {
-                var services = await device.GetServicesAsync();
-                var characteristics = await services[0].GetCharacteristicsAsync();
-
-                characteristic = characteristics.FirstOrDefault(c => c.Id == device.Id);
-            }catch (DeviceConnectionException e)
-            {
-                await Console.Out.WriteLineAsync("Could not get service");
-
+                byte[] bytes = Encoding.UTF8.GetBytes(message);
+                await _socket.OutputStream.WriteAsync(bytes, 0, bytes.Length);
             }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync("Error " + ex.Message);
+            }
+
+            await Task.Delay(1000);
         }
 
-        public static async void SendMessage(string message)
+        public static async Task<byte[]> BluetoothInput()
         {
-            if (characteristic != null)
+            try
             {
-                byte[] dataToSend = Encoding.UTF8.GetBytes(message);
-                await characteristic.WriteAsync(dataToSend);
-            }
-        }
-        public static async void ReadData()
-        {
-            if (characteristic != null)
-            {
-                var data = await characteristic.ReadAsync();
-                if (data.resultCode > 0)
+                using (Stream inputStream = _socket.InputStream)
                 {
-                    await Console.Out.WriteLineAsync(data.data.ToString());
-                }
-                else
-                {
-                    await Console.Out.WriteLineAsync($"Something went wrong. Code: {data.resultCode}");
+                    byte[] buffer = new byte[1024];
+                    int bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length);
+
+                    if (bytesRead > 0)
+                    {
+                        byte[] dataReceived = new byte[bytesRead];
+                        Array.Copy(buffer, dataReceived, bytesRead);
+
+                        return dataReceived;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error reading data from Bluetooth: " + ex.Message);
+            }
+
+            return null;
         }
 
-        public static async void Disconnect(IDevice device)
+        public static void Disconnect()
         {
-            var adapter = CrossBluetoothLE.Current.Adapter;
-            await adapter.DisconnectDeviceAsync(device);
+            try
+            {
+                _socket.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
