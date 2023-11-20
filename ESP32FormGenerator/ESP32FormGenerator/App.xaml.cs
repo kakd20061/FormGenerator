@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Android;
+using Android.Content.PM;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
 namespace ESP32FormGenerator
 {
     public partial class App : Application
@@ -24,6 +27,7 @@ namespace ESP32FormGenerator
         protected override void OnResume ()
         {
         }
+
     }
 }
 

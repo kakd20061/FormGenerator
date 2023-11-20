@@ -8,7 +8,6 @@ using Android.Bluetooth;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Newtonsoft.Json;
-using Plugin.BLE.Abstractions.Contracts;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

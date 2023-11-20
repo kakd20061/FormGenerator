@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Android.Bluetooth;
-using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
-using Newtonsoft.Json;
-using Plugin.BLE.Abstractions.Contracts;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ESP32FormGenerator
@@ -23,6 +15,7 @@ namespace ESP32FormGenerator
             InitializeComponent();
             SetPicker(JsonService.GetBondedDevices());
         }
+
         public void SetPicker(ICollection<BluetoothDevice> devices)
         {
             var resultList = new List<string>();
@@ -33,6 +26,7 @@ namespace ESP32FormGenerator
             }
             picker.ItemsSource = resultList;
         }
+
         async void Connect(System.Object sender, System.EventArgs e)
         {
             string selectedDeviceName = picker.SelectedItem.ToString();

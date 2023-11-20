@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Android.Bluetooth;
 using Android.Util;
-using Android.Widget;
 using Java.Util;
-using Plugin.BLE;
-using Plugin.BLE.Abstractions.Contracts;
-using Plugin.BLE.Abstractions.Exceptions;
-using Plugin.BLE.Abstractions.Extensions;
-using Xamarin.Forms;
-using static Android.Bluetooth.BluetoothClass;
 
 namespace ESP32FormGenerator.Services
 {
