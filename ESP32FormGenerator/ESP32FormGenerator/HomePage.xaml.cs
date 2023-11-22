@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Android.Bluetooth;
 using ESP32FormGenerator.Services;
@@ -27,7 +28,7 @@ namespace ESP32FormGenerator
             picker.ItemsSource = resultList;
         }
 
-        async void Connect(System.Object sender, System.EventArgs e)
+        async void Connect(object sender, EventArgs e)
         {
             string selectedDeviceName = picker.SelectedItem.ToString();
 
