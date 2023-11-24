@@ -6,6 +6,11 @@ namespace ESP32FormGenerator.Models
         public class Forms
         {
             public List<Form> forms { get; set; }
+
+            public Forms(List<Form> forms)
+            {
+                this.forms = forms;
+            }
         }
         public class Form
         {

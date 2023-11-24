@@ -15,8 +15,8 @@ namespace ESP32FormGenerator.Droid
     [Activity(Label = "ESP32FormGenerator", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     public class MainActivity : Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        private int REQUEST_BLUETOOTH = 123;
-        private int REQUEST_ENABLE_BT = 124;
+        private readonly int REQUEST_BLUETOOTH = 123;
+        private readonly int REQUEST_ENABLE_BT = 124;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -59,16 +59,14 @@ namespace ESP32FormGenerator.Droid
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == REQUEST_ENABLE_BT)
+            if (requestCode != REQUEST_ENABLE_BT) return;
+            if (resultCode == Result.Ok)
             {
-                if (resultCode == Result.Ok)
-                {
-                    LoadApplication(new App());
-                }
-                else
-                {
-                    ShowException("App cannot work without Bluetooth off");
-                }
+                LoadApplication(new App());
+            }
+            else
+            {
+                ShowException("App cannot work without Bluetooth off");
             }
         }
         void ShowException(string ExceptionText)
@@ -78,7 +76,7 @@ namespace ESP32FormGenerator.Droid
             FinishAffinity();
         }
 
-        bool IsBluetoothEnabled()
+        private bool IsBluetoothEnabled()
         {
             var adapter = BluetoothAdapter.DefaultAdapter;
             return adapter.IsEnabled;

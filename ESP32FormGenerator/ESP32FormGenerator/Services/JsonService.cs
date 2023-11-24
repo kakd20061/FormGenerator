@@ -36,9 +36,7 @@ namespace ESP32FormGenerator.Services
 
             try
             {
-                _socket = device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
-                await _socket.ConnectAsync();
-
+                await SocketOpen();
             }
             catch (Exception ex)
             {
@@ -49,20 +47,31 @@ namespace ESP32FormGenerator.Services
             await Task.Delay(2000);
         }
 
+        private static async Task SocketOpen()
+        {
+            _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
+            await _socket.ConnectAsync();  
+        }
 
-        public static async void BluetoothCommand(string message)
+        public static async Task<bool> BluetoothCommand(string message)
         {
             try
             {
+                await SocketOpen();
                 byte[] bytes = Encoding.UTF8.GetBytes(message);
-                await _socket.OutputStream.WriteAsync(bytes, 0, bytes.Length);
+                if (_socket.IsConnected && _socket.OutputStream != null)
+                {
+                    await _socket.OutputStream.WriteAsync(bytes, 0, bytes.Length);
+                    Disconnect();
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
                 await Console.Out.WriteLineAsync("Error " + ex.Message);
+                return false;
             }
-
-            await Task.Delay(1000);
         }
 
         public static async Task<byte[]> BluetoothInput()
@@ -93,14 +102,7 @@ namespace ESP32FormGenerator.Services
 
         public static void Disconnect()
         {
-            try
-            {
-                _socket.Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            _socket.Close();
         }
     }
 }
