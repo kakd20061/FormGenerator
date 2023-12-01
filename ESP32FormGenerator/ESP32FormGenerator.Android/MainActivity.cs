@@ -84,23 +84,35 @@ namespace ESP32FormGenerator.Droid
 
         void RequestBluetoothPermission()
         {
-            const string permission = Manifest.Permission.BluetoothConnect;
-            if (ContextCompat.CheckSelfPermission(this, permission) == (int)Permission.Granted)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
-                if (!IsBluetoothEnabled())
+                const string permission = Manifest.Permission.BluetoothConnect;
+                if (ContextCompat.CheckSelfPermission(this, permission) == (int)Permission.Granted)
                 {
-                    var enableBtIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
-                    StartActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    ProceedWithBluetoothConnection();
                 }
                 else
                 {
-                    LoadApplication(new App());
+                    var requiredPermissions = new string[] { Manifest.Permission.BluetoothConnect };
+                    ActivityCompat.RequestPermissions(this, requiredPermissions, REQUEST_BLUETOOTH);
                 }
             }
             else
             {
-                var requiredPermissions = new string[] { Manifest.Permission.BluetoothConnect };
-                ActivityCompat.RequestPermissions(this, requiredPermissions, REQUEST_BLUETOOTH);
+                ProceedWithBluetoothConnection();
+            }
+        }
+
+        void ProceedWithBluetoothConnection()
+        {
+            if (!IsBluetoothEnabled())
+            {
+                var enableBtIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
+                StartActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+            else
+            {
+                LoadApplication(new App());
             }
         }
     }
