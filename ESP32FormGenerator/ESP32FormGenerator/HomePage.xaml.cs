@@ -30,10 +30,19 @@ namespace ESP32FormGenerator
 
         async void Connect(object sender, EventArgs e)
         {
-            string selectedDeviceName = picker.SelectedItem.ToString();
+            BluetoothDevice item = null;
+            try
+            {
+                string selectedDeviceName = picker.SelectedItem.ToString();
 
-            var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
-
+                item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
+                
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", "Cannot connect selected device", "OK");
+            }
+            
             await JsonService.Connect(item);
             await Navigation.PushAsync(new MainPage(item));
         }

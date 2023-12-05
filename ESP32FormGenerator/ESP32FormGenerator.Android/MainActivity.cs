@@ -79,6 +79,7 @@ namespace ESP32FormGenerator.Droid
         private bool IsBluetoothEnabled()
         {
             var adapter = BluetoothAdapter.DefaultAdapter;
+            if (adapter == null) return false;
             return adapter.IsEnabled;
         }
 
