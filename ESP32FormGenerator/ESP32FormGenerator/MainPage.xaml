@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
-             x:Class="ESP32FormGenerator.MainPage">
-    <NavigationPage.TitleView>
-        <Label x:Name="esp32Address" HorizontalTextAlignment="End" TextColor="White" FontSize="16" Margin="0, 0,20,0" Text="ESP32: 00:1B:44:11:3A:B7"></Label>
-    </NavigationPage.TitleView>
-</TabbedPage>

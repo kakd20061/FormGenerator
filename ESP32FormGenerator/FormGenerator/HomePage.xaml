@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+             x:Class="FormGenerator.HomePage">
+    <NavigationPage.TitleView>
+        <Label HorizontalTextAlignment="Center" TextColor="White" FontSize="16" Text="Connect your device"></Label>
+    </NavigationPage.TitleView>
+    <StackLayout>
+
+        <StackLayout Padding="20,50,20,0">
+
+            <Picker x:Name="picker"
+            Title="Select device">
+            </Picker>
+
+        </StackLayout>
+        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+
+        <Button WidthRequest      ="160"
+    HeightRequest     ="160"
+    CornerRadius      ="80"
+    VerticalOptions   ="Center"
+    HorizontalOptions ="Center"
+    Clicked="Connect"
+    Text="Connect"
+    BackgroundColor="#0098ee"
+    TextColor="#ffffff"></Button>
+
+        </StackLayout>
+
+    </StackLayout>
+</ContentPage>
+

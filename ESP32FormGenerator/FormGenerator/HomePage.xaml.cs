@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Android.Bluetooth;
+using ESP32FormGenerator.Services;
+using Xamarin.Forms;
+
+namespace FormGenerator
+{
+    public partial class HomePage : ContentPage
+    {
+        private ICollection<BluetoothDevice> devices;
+
+        public HomePage()
+        {
+            InitializeComponent();
+            SetPicker(JsonService.GetBondedDevices());
+        }
+
+        public void SetPicker(ICollection<BluetoothDevice> devices)
+        {
+            var resultList = new List<string>();
+            this.devices = devices;
+            foreach (var item in devices)
+            {
+                resultList.Add(item.Name);
+            }
+            picker.ItemsSource = resultList;
+        }
+
+        async void Connect(object sender, EventArgs e)
+        {
+            try
+            {
+                string selectedDeviceName = picker.SelectedItem.ToString();
+
+                var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
+
+                await JsonService.Connect(item);
+                await Navigation.PushAsync(new MainPage(item));
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", "Cannot connect selected device", "OK");
+            }
+        }
+    }
+}
