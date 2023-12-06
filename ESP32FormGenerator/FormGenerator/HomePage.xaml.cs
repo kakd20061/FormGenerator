@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Android.Bluetooth;
+using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Xamarin.Forms;
 
@@ -15,6 +16,7 @@ namespace FormGenerator
         {
             InitializeComponent();
             SetPicker(JsonService.GetBondedDevices());
+            BindingContext = new LoadingModel(false);
         }
 
         public void SetPicker(ICollection<BluetoothDevice> devices)
@@ -32,15 +34,18 @@ namespace FormGenerator
         {
             try
             {
+                BindingContext = new LoadingModel(true);
                 string selectedDeviceName = picker.SelectedItem.ToString();
-
+                
                 var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
 
                 await JsonService.Connect(item);
+                BindingContext = new LoadingModel(false);
                 await Navigation.PushAsync(new MainPage(item));
             }
             catch (Exception ex)
             {
+                BindingContext = new LoadingModel(false);
                 await DisplayAlert("Error", "Cannot connect selected device", "OK");
             }
         }

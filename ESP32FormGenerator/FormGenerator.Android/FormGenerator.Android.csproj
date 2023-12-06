@@ -85,6 +85,14 @@
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
     <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher_background.png">
       <SubType></SubType>
       <Generator></Generator>
@@ -165,19 +173,16 @@
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml">
-      <SubType></SubType>
-      <Generator></Generator>
-    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
     <Folder Include="Resources\layout\" />
     <Folder Include="Resources\mipmap-anydpi-v26\" />
+    <Folder Include="Resources\mipmap-hdpi\" />
+    <Folder Include="Resources\mipmap-mdpi\" />
+    <Folder Include="Resources\mipmap-xhdpi\" />
+    <Folder Include="Resources\mipmap-xxhdpi\" />
+    <Folder Include="Resources\mipmap-xxxhdpi\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FormGenerator\FormGenerator.csproj">
