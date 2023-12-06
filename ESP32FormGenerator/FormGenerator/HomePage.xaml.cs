@@ -38,10 +38,16 @@ namespace FormGenerator
                 string selectedDeviceName = picker.SelectedItem.ToString();
                 
                 var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
-
-                await JsonService.Connect(item);
+                var connectionResult = await JsonService.Connect(item);
                 BindingContext = new LoadingModel(false);
-                await Navigation.PushAsync(new MainPage(item));
+                if (connectionResult)
+                {
+                    await Navigation.PushAsync(new MainPage(item));
+                }
+                else
+                {
+                    await DisplayAlert("Error", "Cannot connect selected device", "Ok");
+                }
             }
             catch (Exception ex)
             {

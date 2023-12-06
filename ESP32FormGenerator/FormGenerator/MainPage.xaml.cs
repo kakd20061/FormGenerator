@@ -309,7 +309,7 @@ namespace FormGenerator
             };
             var json = JsonConvert.SerializeObject(_forms, serializerSettings);
                 
-            var r =await JsonService.BluetoothCommand(json);
+            var r = await JsonService.BluetoothCommand(json);
             if(r) await DisplayAlert("ESP32", "Saved and Sent", "OK");
             else await DisplayAlert("ESP32", "Something goes wrong", "OK");
         }
