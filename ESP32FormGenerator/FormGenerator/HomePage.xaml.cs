@@ -36,8 +36,16 @@ namespace FormGenerator
 
                 var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
 
-                await JsonService.Connect(item);
-                await Navigation.PushAsync(new MainPage(item));
+                var connectionResult =await JsonService.Connect(item);
+
+                if (connectionResult)
+                {
+                    await Navigation.PushAsync(new MainPage(item));
+                }
+                else
+                {
+                    await DisplayAlert("Error", "Cannot connect selected device", "Ok");
+                }
             }
             catch (Exception ex)
             {

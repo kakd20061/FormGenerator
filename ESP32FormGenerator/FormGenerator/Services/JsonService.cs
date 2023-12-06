@@ -25,18 +25,19 @@ namespace ESP32FormGenerator.Services
             return bluetoothAdapter.BondedDevices; //Urzadzenia do Selecta
         }
 
-        public static async Task Connect(BluetoothDevice device)
+        public static async Task<bool> Connect(BluetoothDevice device)
         {
             _device = device;
+            bool socketState = false;
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
             if (bluetoothAdapter == null || !bluetoothAdapter.IsEnabled)
             {
-                return;
+                return false;
             }
 
             try
-            {
-                await SocketOpen();
+            { 
+                socketState = await SocketOpen();
             }
             catch (Exception ex)
             {
@@ -45,12 +46,14 @@ namespace ESP32FormGenerator.Services
             }
 
             await Task.Delay(2000);
+            return socketState;
         }
 
-        private static async Task SocketOpen()
+        private static async Task<bool> SocketOpen()
         {
             _socket = _device.CreateRfcommSocketToServiceRecord(UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
-            await _socket.ConnectAsync();  
+            await _socket.ConnectAsync();
+            return _socket.IsConnected; //todo: check if this is correct
         }
 
         public static async Task<bool> BluetoothCommand(string message)
@@ -58,6 +61,7 @@ namespace ESP32FormGenerator.Services
             try
             {
                 await SocketOpen();
+                await Task.Delay(2000);
                 byte[] bytes = Encoding.UTF8.GetBytes(message);
                 if (_socket.IsConnected && _socket.OutputStream != null)
                 {
@@ -65,11 +69,13 @@ namespace ESP32FormGenerator.Services
                     Disconnect();
                     return true;
                 }
+                Disconnect();
                 return false;
             }
             catch (Exception ex)
             {
                 await Console.Out.WriteLineAsync("Error " + ex.Message);
+                Disconnect();
                 return false;
             }
         }
@@ -100,9 +106,9 @@ namespace ESP32FormGenerator.Services
             return null;
         }
 
-        public static void Disconnect()
+        private static void Disconnect()
         {
-            _socket.Close();
+            if(_socket.IsConnected) _socket.Close();
         }
     }
 }
