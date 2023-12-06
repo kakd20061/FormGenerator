@@ -1,6 +1,6 @@
 # ESP32 Configurator - Aplikacja Androidowa
 
-![Logo aplikacji](link_do_logo.png)
+![Logo aplikacji](ESP32FormGenerator/FormGenerator.Android/Resources/mipmap-hdpi/ic_launcher.png)
 
 ## Opis
 
