@@ -3,6 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FormGenerator.App">
     <Application.Resources>
-
+            <Style TargetType="NavigationPage" ApplyToDerivedTypes="True">
+                <Setter Property="BarBackgroundColor" Value="#5c4798"/>
+                <Setter Property="Background" Value="#F0E8FA"></Setter>
+            </Style>
+            <Style TargetType="TabbedPage" ApplyToDerivedTypes="True">
+                <Setter Property="BarBackgroundColor" Value="#5c4798"/>
+                <Setter Property="Background" Value="#F0E8FA"></Setter>
+            </Style>
     </Application.Resources>
 </Application>

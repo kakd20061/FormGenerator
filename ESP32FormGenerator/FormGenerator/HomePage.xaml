@@ -12,7 +12,8 @@
         <StackLayout Padding="20,50,20,0">
 
             <Picker x:Name="picker"
-            Title="Select device">
+            Title="Select device"
+            >
             </Picker>
 
         </StackLayout>
@@ -26,13 +27,13 @@
                 HorizontalOptions ="Center"
                 Clicked="Connect"
                 Text="Connect"
-                BackgroundColor="#110D1C"
+                BackgroundColor="#7d6ab2"
                 TextColor="#ffffff"
                 IsVisible="{Binding IsNotLoading}"
             >
             </Button>
               <ActivityIndicator
-            Color="white"
+            Color="#7d6ab2"
             WidthRequest="58"
             HeightRequest="58"
             IsVisible="{Binding IsLoading}" IsRunning="True">

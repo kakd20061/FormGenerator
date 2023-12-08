@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Android.Bluetooth;
+using Android.Content;
 using Android.Util;
 using Java.Util;
 
@@ -13,6 +14,7 @@ namespace ESP32FormGenerator.Services
     {
         private static BluetoothDevice _device;
         private static BluetoothSocket _socket;
+        public static BluetoothAdapter _bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
         public static ICollection<BluetoothDevice> GetBondedDevices()
         {
@@ -109,6 +111,14 @@ namespace ESP32FormGenerator.Services
         private static void Disconnect()
         {
             if(_socket.IsConnected) _socket.Close();
+        }
+        
+        public static void OpenBluetoothSettings()
+        {
+            Intent intentOpenBluetoothSettings = new Intent();
+            intentOpenBluetoothSettings.SetAction(Android.Provider.Settings.ActionBluetoothSettings);
+            intentOpenBluetoothSettings.AddFlags(ActivityFlags.NewTask);
+            Android.App.Application.Context.StartActivity(intentOpenBluetoothSettings);
         }
     }
 }

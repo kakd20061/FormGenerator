@@ -9,6 +9,8 @@ using Xamarin.Essentials;
 using Android.Bluetooth;
 using Android.Content;
 using Android.Widget;
+using Xamarin.Forms;
+using ColorExtensions = Xamarin.Forms.Platform.Android.ColorExtensions;
 
 namespace FormGenerator.Droid
 {
@@ -21,9 +23,9 @@ namespace FormGenerator.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
+            SetStatusBarColor(ColorExtensions.ToAndroid(Color.FromHex("#5C4798")));
             Platform.Init(this, savedInstanceState);
-            Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Forms.Init(this, savedInstanceState);
 
             RequestBluetoothPermission();
         }

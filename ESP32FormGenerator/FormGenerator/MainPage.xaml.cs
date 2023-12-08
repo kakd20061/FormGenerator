@@ -12,6 +12,7 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Newtonsoft;
 using Newtonsoft.Json.Serialization;
+using Button = Xamarin.Forms.Button;
 
 namespace FormGenerator
 {
@@ -19,6 +20,7 @@ namespace FormGenerator
     {
         private Forms _forms;
         private Forms _defaultForms;
+        private Button _resetButton;
         public MainPage(BluetoothDevice device)
         {
             InitializeComponent();
@@ -74,7 +76,20 @@ namespace FormGenerator
                 Children.Add(tappedPage);
 
 
-
+                var activityIndicator = new ActivityIndicator
+                {
+                    IsRunning = true,
+                    IsVisible = false,
+                    Color = Color.FromHex("#5C4798"),
+                };
+                var resultMessage = new Label
+                {
+                    Text = "Saved and Sent",
+                    TextColor = Color.Green,
+                    FontSize = 10,
+                    HorizontalOptions = LayoutOptions.Center,
+                    IsVisible = false
+                };
                 foreach (var member in form.Members)
                 {
                     switch (member.Type)
@@ -114,13 +129,13 @@ namespace FormGenerator
                             {
                                 IsToggled = (bool)member.Set,
                                 VerticalOptions = LayoutOptions.Center,
-                                ThumbColor = Color.DarkGreen,
-                                OnColor = Color.Green,
+                                ThumbColor = Color.FromHex("#5C4798"),
+                                OnColor = Color.FromHex("#7d6ab2"),
                             };
 
                             sw.Toggled += (sender, e) =>
                             {
-                                OnChanged(sender, e, member);
+                                OnChanged(sender, e, member, activityIndicator);
                             };
 
                             sl.Children.Add(label);
@@ -225,6 +240,8 @@ namespace FormGenerator
                     }
 
                 }
+                stackLayout.Children.Add(activityIndicator);
+                stackLayout.Children.Add(resultMessage);
                 var sl1 = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
@@ -246,15 +263,17 @@ namespace FormGenerator
                                 TextTransform = TextTransform.None
                             };
 
-                            button.Clicked += SaveAction;
-
+                            button.Clicked += (sender, e) =>
+                            {
+                                SaveAction(sender, e, activityIndicator,resultMessage);
+                            };
                             sl1.Children.Add(button);
 
                             break;
 
                         case "reset":
 
-                            var button1 = new Xamarin.Forms.Button
+                            _resetButton = new Xamarin.Forms.Button
                             {
                                 Text = "Reset",
                                 TextColor = Color.White,
@@ -263,9 +282,9 @@ namespace FormGenerator
                                 TextTransform = TextTransform.None,
                             };
 
-                            button1.Clicked += ResetAction;
+                            _resetButton.Clicked += ResetAction;
 
-                            sl1.Children.Add(button1);
+                            sl1.Children.Add(_resetButton);
 
                             break;
                     }
@@ -275,7 +294,7 @@ namespace FormGenerator
         }
 
 
-        private void OnChanged(object sender,EventArgs e,Member member)
+        private void OnChanged(object sender,EventArgs e,Member member, ActivityIndicator indicator = null, Label resultMessage = null)
         {
             switch (sender)
             {
@@ -289,7 +308,7 @@ namespace FormGenerator
                 {
                     var status = sw.IsToggled;
                     member.Set = status;
-                    if((bool)member.Autosend) SaveAction(sender,e);
+                    if((bool)member.Autosend) SaveAction(sender,e, indicator, resultMessage);
                     break;
                 }
                 case Picker picker:
@@ -301,8 +320,19 @@ namespace FormGenerator
             } 
         }
         
-        private async void SaveAction(object sender,EventArgs e)
+        private async void SaveAction(object sender,EventArgs e, ActivityIndicator indicator, Label resultMessage)
         {
+            resultMessage.IsVisible = false;
+            if(!JsonService._bluetoothAdapter.IsEnabled)
+            {
+                var alert = await DisplayAlert("Error", "Bluetooth is disabled", "Enable bluetooth", "Cancel");
+                if(alert) JsonService.OpenBluetoothSettings();
+                return;
+            }
+            indicator.IsVisible = true;
+            _resetButton.IsVisible = false;
+            var btn = (Button)sender;
+            btn.IsVisible = false;
             var serializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -310,8 +340,20 @@ namespace FormGenerator
             var json = JsonConvert.SerializeObject(_forms, serializerSettings);
                 
             var r = await JsonService.BluetoothCommand(json);
-            if(r) await DisplayAlert("ESP32", "Saved and Sent", "OK");
-            else await DisplayAlert("ESP32", "Something goes wrong", "OK");
+            if (r)
+            {
+                resultMessage.Text = "Saved and Sent";
+                resultMessage.TextColor = Color.Green;
+            }
+            else
+            {
+                resultMessage.Text = "Something goes wrong";
+                resultMessage.TextColor = Color.Red;
+            }
+            indicator.IsVisible = false;
+            btn.IsVisible = true;
+            _resetButton.IsVisible = true;
+            resultMessage.IsVisible = true;
         }
         private void ResetAction(object sender, EventArgs e)
         {
