@@ -13,6 +13,7 @@ using Xamarin.Forms;
 using Newtonsoft;
 using Newtonsoft.Json.Serialization;
 using XF.Material.Forms.UI;
+using XF.Material.Forms.UI.Dialogs;
 using XF.Material.Forms.UI.Internals;
 using Button = Xamarin.Forms.Button;
 
@@ -22,7 +23,7 @@ namespace FormGenerator
     {
         private Forms _forms;
         private Forms _defaultForms;
-        private Button _resetButton, _submitButton;
+        private MaterialButton _resetButton, _submitButton;
         public MainPage(BluetoothDevice device)
         {
             InitializeComponent();
@@ -84,14 +85,6 @@ namespace FormGenerator
                     IsVisible = false,
                     Color = Color.FromHex("#5C4798"),
                 };
-                var resultMessage = new Label
-                {
-                    Text = "Saved and Sent",
-                    TextColor = Color.Green,
-                    FontSize = 10,
-                    HorizontalOptions = LayoutOptions.Center,
-                    IsVisible = false
-                };
                 foreach (var member in form.Members)
                 {
                     switch (member.Type)
@@ -102,9 +95,9 @@ namespace FormGenerator
                             {
                                 Placeholder = member.Label,
                                 InputType = MaterialTextFieldInputType.Default,
-                                BackgroundColor = Color.Transparent, 
                                 Text = member.Value.ToString(),
                                 Margin = new Thickness(0, 20),
+                                BackgroundColor = Color.FromHex("#f2f2f2")
                             };
 
                             entry.TextChanged += (sender, e) =>
@@ -129,17 +122,18 @@ namespace FormGenerator
                                 TextColor = Color.Black,
                                 FontSize = 20
                             };
-                            var sw = new Switch
+                            var sw = new MaterialSwitch
                             {
-                                IsToggled = (bool)member.Set,
+                                IsActivated = (bool)member.Set,
                                 VerticalOptions = LayoutOptions.Center,
-                                ThumbColor = Color.FromHex("#5C4798"),
-                                OnColor = Color.FromHex("#7d6ab2"),
+                                ActiveThumbColor = Color.FromHex("#5C4798"),
+                                InactiveThumbColor = Color.FromHex("#5C4798"),
+                                ActiveTrackColor = Color.FromHex("#7d6ab2"),
                             };
 
-                            sw.Toggled += (sender, e) =>
+                            sw.Activated += (sender, e) =>
                             {
-                                OnChanged(sender, e, member, activityIndicator, resultMessage);
+                                OnChanged(sender, e, member, activityIndicator);
                             };
 
                             sl.Children.Add(label);
@@ -152,15 +146,17 @@ namespace FormGenerator
                         case "select":
                             var values = JsonConvert.DeserializeObject<ItemsList>("{" + $"value:{member.Value}" + "}");
 
-                            var picker = new Picker
+                            var picker = new MaterialTextField
                             {
-                                Title = member.Label,
-                                Margin = new Thickness(0, 20)
+                                InputType = MaterialTextFieldInputType.Choice,
+                                Placeholder = member.Label,
+                                Margin = new Thickness(0, 20),
+                                BackgroundColor = Color.FromHex("#f2f2f2")
                             };
 
-                            picker.ItemsSource = values.Value.Select(n => n.Label).ToList();
+                            picker.Choices = values.Value.Select(n => n.Label).ToList();
 
-                            picker.SelectedIndexChanged += (sender, e) =>
+                            picker.ChoiceSelected += (sender, e) =>
                             {
                                 OnChanged(sender, e, member);
                             };
@@ -170,12 +166,13 @@ namespace FormGenerator
                             break;
 
                         case "password":
-                            var password = new Entry
+                            var password = new MaterialTextField
                             {
-                                IsPassword = true,
+                                InputType = MaterialTextFieldInputType.Password,
                                 Placeholder = member.Label,
                                 Text = member.Value.ToString(),
-                                Margin = new Thickness(0, 20)
+                                Margin = new Thickness(0, 20),
+                                BackgroundColor = Color.FromHex("#f2f2f2")
                             };
 
                             password.TextChanged += (sender, e) =>
@@ -245,7 +242,6 @@ namespace FormGenerator
 
                 }
                 stackLayout.Children.Add(activityIndicator);
-                stackLayout.Children.Add(resultMessage);
                 var sl1 = new StackLayout
                 {
                     Orientation = StackOrientation.Horizontal,
@@ -258,7 +254,7 @@ namespace FormGenerator
                     {
                         case "save":
 
-                            _submitButton  = new Xamarin.Forms.Button
+                            _submitButton  = new MaterialButton
                             {
                                 Text = "Save",
                                 TextColor = Color.White,
@@ -269,7 +265,7 @@ namespace FormGenerator
 
                             _submitButton.Clicked += (sender, e) =>
                             {
-                                SaveAction(sender, e, activityIndicator,resultMessage);
+                                SaveAction(sender, e, activityIndicator);
                             };
                             sl1.Children.Add(_submitButton);
 
@@ -277,7 +273,7 @@ namespace FormGenerator
 
                         case "reset":
 
-                            _resetButton = new Xamarin.Forms.Button
+                            _resetButton = new MaterialButton
                             {
                                 Text = "Reset",
                                 TextColor = Color.White,
@@ -298,35 +294,36 @@ namespace FormGenerator
         }
 
 
-        private void OnChanged(object sender,EventArgs e,Member member, ActivityIndicator indicator = null, Label resultMessage = null)
+        private void OnChanged(object sender,EventArgs e,Member member, ActivityIndicator indicator = null)
         {
             switch (sender)
             {
                 case MaterialTextField entry:
                 {
-                    var txt = entry.Text;
-                    member.Value = txt;
+                    if (entry.InputType == MaterialTextFieldInputType.Choice)
+                    {
+                        var index = entry.Choices.IndexOf(entry.SelectedChoice);
+                        member.Set = index;
+                    }
+                    else
+                    {
+                        var txt = entry.Text;
+                        member.Value = txt;
+                    }
                     break;
                 }
-                case Switch sw:
+                case MaterialSwitch sw:
                 {
-                    var status = sw.IsToggled;
+                    var status = sw.IsActivated;
                     member.Set = status;
-                    if((bool)member.Autosend) SaveAction(sender,e, indicator, resultMessage);
-                    break;
-                }
-                case Picker picker:
-                {
-                    var index = picker.SelectedIndex;
-                    member.Set = index;
+                    if((bool)member.Autosend) SaveAction(sender,e, indicator);
                     break;
                 }
             } 
         }
         
-        private async void SaveAction(object sender,EventArgs e, ActivityIndicator indicator, Label resultMessage)
+        private async void SaveAction(object sender,EventArgs e, ActivityIndicator indicator)
         {
-            resultMessage.IsVisible = false;
             if(!JsonService._bluetoothAdapter.IsEnabled)
             {
                 var alert = await DisplayAlert("Error", "Bluetooth is disabled", "Enable bluetooth", "Cancel");
@@ -344,20 +341,21 @@ namespace FormGenerator
             var json = JsonConvert.SerializeObject(_forms, serializerSettings);
                 
             var r = await JsonService.BluetoothCommand(json);
-            if (r)
-            {
-                resultMessage.Text = "Saved and Sent";
-                resultMessage.TextColor = Color.Green;
-            }
-            else
-            {
-                resultMessage.Text = "Something goes wrong";
-                resultMessage.TextColor = Color.Red;
-            }
             indicator.IsVisible = false;
             _submitButton.IsVisible = true;
             _resetButton.IsVisible = true;
-            resultMessage.IsVisible = true;
+            if (r)
+            {
+                await MaterialDialog.Instance.SnackbarAsync(message: "Saved and sent",
+                    actionButtonText: "Got It",
+                    msDuration: 3000);
+            }
+            else
+            {
+                await MaterialDialog.Instance.SnackbarAsync(message: "Something went wrong",
+                    actionButtonText: "Got It",
+                    msDuration: 3000);
+            }
         }
         private void ResetAction(object sender, EventArgs e)
         {
