@@ -12,6 +12,8 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Newtonsoft;
 using Newtonsoft.Json.Serialization;
+using XF.Material.Forms.UI;
+using XF.Material.Forms.UI.Internals;
 using Button = Xamarin.Forms.Button;
 
 namespace FormGenerator
@@ -20,7 +22,7 @@ namespace FormGenerator
     {
         private Forms _forms;
         private Forms _defaultForms;
-        private Button _resetButton;
+        private Button _resetButton, _submitButton;
         public MainPage(BluetoothDevice device)
         {
             InitializeComponent();
@@ -96,9 +98,11 @@ namespace FormGenerator
                     {
                         case "text":
 
-                            var entry = new Entry
+                            var entry = new MaterialTextField
                             {
                                 Placeholder = member.Label,
+                                InputType = MaterialTextFieldInputType.Default,
+                                BackgroundColor = Color.Transparent, 
                                 Text = member.Value.ToString(),
                                 Margin = new Thickness(0, 20),
                             };
@@ -135,7 +139,7 @@ namespace FormGenerator
 
                             sw.Toggled += (sender, e) =>
                             {
-                                OnChanged(sender, e, member, activityIndicator);
+                                OnChanged(sender, e, member, activityIndicator, resultMessage);
                             };
 
                             sl.Children.Add(label);
@@ -254,7 +258,7 @@ namespace FormGenerator
                     {
                         case "save":
 
-                            var button = new Xamarin.Forms.Button
+                            _submitButton  = new Xamarin.Forms.Button
                             {
                                 Text = "Save",
                                 TextColor = Color.White,
@@ -263,11 +267,11 @@ namespace FormGenerator
                                 TextTransform = TextTransform.None
                             };
 
-                            button.Clicked += (sender, e) =>
+                            _submitButton.Clicked += (sender, e) =>
                             {
                                 SaveAction(sender, e, activityIndicator,resultMessage);
                             };
-                            sl1.Children.Add(button);
+                            sl1.Children.Add(_submitButton);
 
                             break;
 
@@ -298,7 +302,7 @@ namespace FormGenerator
         {
             switch (sender)
             {
-                case Entry entry:
+                case MaterialTextField entry:
                 {
                     var txt = entry.Text;
                     member.Value = txt;
@@ -331,8 +335,8 @@ namespace FormGenerator
             }
             indicator.IsVisible = true;
             _resetButton.IsVisible = false;
-            var btn = (Button)sender;
-            btn.IsVisible = false;
+            
+            _submitButton.IsVisible = false;
             var serializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -351,7 +355,7 @@ namespace FormGenerator
                 resultMessage.TextColor = Color.Red;
             }
             indicator.IsVisible = false;
-            btn.IsVisible = true;
+            _submitButton.IsVisible = true;
             _resetButton.IsVisible = true;
             resultMessage.IsVisible = true;
         }

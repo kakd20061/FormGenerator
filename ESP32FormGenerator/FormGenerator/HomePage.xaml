@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+             xmlns:ui="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
              x:Class="FormGenerator.HomePage"
              >
     <NavigationPage.TitleView>
@@ -11,11 +12,7 @@
 
         <StackLayout Padding="20,50,20,0">
 
-            <Picker x:Name="picker"
-            Title="Select device"
-            >
-            </Picker>
-
+            <ui:MaterialTextField x:Name="picker" Placeholder="Choose your device" ErrorText="Error" InputType="Choice" />
         </StackLayout>
         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
 

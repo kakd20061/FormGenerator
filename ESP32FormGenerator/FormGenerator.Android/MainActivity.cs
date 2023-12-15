@@ -26,7 +26,7 @@ namespace FormGenerator.Droid
             SetStatusBarColor(ColorExtensions.ToAndroid(Color.FromHex("#5C4798")));
             Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
-
+            XF.Material.Droid.Material.Init(this, savedInstanceState);
             RequestBluetoothPermission();
         }
 

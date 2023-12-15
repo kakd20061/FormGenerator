@@ -6,6 +6,7 @@ using Android.Content;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Xamarin.Forms;
+using XF.Material.Forms.UI.Dialogs;
 
 namespace FormGenerator
 {
@@ -27,7 +28,7 @@ namespace FormGenerator
             {
                 resultList.Add(item.Name);
             }
-            picker.ItemsSource = resultList;
+            picker.Choices = resultList;
         }
 
         async void Connect(object sender, EventArgs e)
@@ -35,7 +36,7 @@ namespace FormGenerator
             try
             {
                 BindingContext = new LoadingModel(true);
-                string selectedDeviceName = picker.SelectedItem.ToString();
+                string selectedDeviceName = picker.SelectedChoice.ToString();
                 
                 var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
                 var connectionResult = await JsonService.Connect(item);
@@ -43,8 +44,11 @@ namespace FormGenerator
 
                 if(!JsonService._bluetoothAdapter.IsEnabled)
                 {
-                    var alert = await DisplayAlert("Error", "Bluetooth is disabled", "Enable bluetooth", "Cancel");
-                    if(alert) JsonService.OpenBluetoothSettings();
+                    var matAlert = await MaterialDialog.Instance.ConfirmAsync(message: "Bluetooth is disabled", 
+                        title: "Error", 
+                        confirmingText: "Enable bluetooth", 
+                        dismissiveText: "Cancel");
+                    if(matAlert.Value) JsonService.OpenBluetoothSettings();
                     return;
                 }
                 if (connectionResult)
@@ -53,13 +57,13 @@ namespace FormGenerator
                 }
                 else
                 {
-                    await DisplayAlert("Error", "Cannot connect selected device", "Ok");
+                    await MaterialDialog.Instance.AlertAsync("Cannot connect selected device", "Error", "Ok");
                 }
             }
             catch (Exception ex)
             {
                 BindingContext = new LoadingModel(false);
-                await DisplayAlert("Error", "Cannot connect selected device", "OK");
+                await MaterialDialog.Instance.AlertAsync("Cannot connect selected device", "Error", "Ok");
             }
         }
     }
