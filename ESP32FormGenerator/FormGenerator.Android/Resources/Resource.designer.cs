@@ -29926,7 +29926,10 @@ namespace ESP32FormGenerator.Droid
 		{
 			
 			// aapt resource value: 0x7F0C0004
-			public const int icon_round = 2131492868;
+			public const int icon_background = 2131492868;
+			
+			// aapt resource value: 0x7F0C0005
+			public const int icon_round = 2131492869;
 			
 			// aapt resource value: 0x7F0C0000
 			public const int ic_launcher = 2131492864;
