@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,14 +7,10 @@ using Android.Bluetooth;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Newtonsoft.Json;
-using Xamarin.Essentials;
 using Xamarin.Forms;
-using Newtonsoft;
 using Newtonsoft.Json.Serialization;
 using XF.Material.Forms.UI;
 using XF.Material.Forms.UI.Dialogs;
-using XF.Material.Forms.UI.Internals;
-using Button = Xamarin.Forms.Button;
 
 namespace FormGenerator
 {
@@ -48,7 +43,7 @@ namespace FormGenerator
         {
             try
             {
-                var json = Encoding.UTF8.GetString(await JsonService.BluetoothInput());
+                var json = Encoding.UTF8.GetString(await BluetoothService.BluetoothInput());
                 var forms = JsonConvert.DeserializeObject<Forms>(json);
                 return forms;
             }
@@ -324,10 +319,10 @@ namespace FormGenerator
         
         private async void SaveAction(object sender,EventArgs e, ActivityIndicator indicator)
         {
-            if(!JsonService._bluetoothAdapter.IsEnabled)
+            if(!BluetoothService._bluetoothAdapter.IsEnabled)
             {
                 var alert = await DisplayAlert("Error", "Bluetooth is disabled", "Enable bluetooth", "Cancel");
-                if(alert) JsonService.OpenBluetoothSettings();
+                if(alert) BluetoothService.OpenBluetoothSettings();
                 return;
             }
             indicator.IsVisible = true;
@@ -340,7 +335,7 @@ namespace FormGenerator
             };
             var json = JsonConvert.SerializeObject(_forms, serializerSettings);
                 
-            var r = await JsonService.BluetoothCommand(json);
+            var r = await BluetoothService.BluetoothCommand(json);
             indicator.IsVisible = false;
             _submitButton.IsVisible = true;
             _resetButton.IsVisible = true;

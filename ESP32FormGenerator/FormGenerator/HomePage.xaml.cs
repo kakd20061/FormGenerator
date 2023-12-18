@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Android.Bluetooth;
-using Android.Content;
 using ESP32FormGenerator.Models;
 using ESP32FormGenerator.Services;
 using Xamarin.Forms;
@@ -16,7 +15,7 @@ namespace FormGenerator
         public HomePage()
         {
             InitializeComponent();
-            SetPicker(JsonService.GetBondedDevices());
+            SetPicker(BluetoothService.GetBondedDevices());
             BindingContext = new LoadingModel(false);
         }
 
@@ -39,16 +38,16 @@ namespace FormGenerator
                 string selectedDeviceName = picker.SelectedChoice.ToString();
                 
                 var item = devices.FirstOrDefault(n => n.Name == selectedDeviceName);
-                var connectionResult = await JsonService.Connect(item);
+                var connectionResult = await BluetoothService.Connect(item);
                 BindingContext = new LoadingModel(false);
 
-                if(!JsonService._bluetoothAdapter.IsEnabled)
+                if(!BluetoothService._bluetoothAdapter.IsEnabled)
                 {
                     var matAlert = await MaterialDialog.Instance.ConfirmAsync(message: "Bluetooth is disabled", 
                         title: "Error", 
                         confirmingText: "Enable bluetooth", 
                         dismissiveText: "Cancel");
-                    if(matAlert.Value) JsonService.OpenBluetoothSettings();
+                    if(matAlert.Value) BluetoothService.OpenBluetoothSettings();
                     return;
                 }
                 if (connectionResult)

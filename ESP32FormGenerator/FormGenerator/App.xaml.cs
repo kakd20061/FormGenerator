@@ -1,10 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android;
-using Android.Content.PM;
-using Xamarin.Essentials;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
 namespace FormGenerator
 {
     public partial class App : Application

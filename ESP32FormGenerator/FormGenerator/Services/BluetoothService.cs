@@ -10,7 +10,7 @@ using Java.Util;
 
 namespace ESP32FormGenerator.Services
 {
-    public static class JsonService
+    public static class BluetoothService
     {
         private static BluetoothDevice _device;
         private static BluetoothSocket _socket;
