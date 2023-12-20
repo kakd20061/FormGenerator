@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Android.Bluetooth;
-using ESP32FormGenerator.Models;
+using IoTConfigurator.Models;
 using ESP32FormGenerator.Services;
 using Newtonsoft.Json;
 using Xamarin.Forms;

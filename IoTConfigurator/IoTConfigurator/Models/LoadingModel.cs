@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ESP32FormGenerator.Models
+namespace IoTConfigurator.Models
 {
 	public class LoadingModel : INotifyPropertyChanged
     {

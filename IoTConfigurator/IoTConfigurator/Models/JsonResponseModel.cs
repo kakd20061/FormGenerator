@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ESP32FormGenerator.Models
+namespace IoTConfigurator.Models
 {
         public class Forms
         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Android.Bluetooth;
-using ESP32FormGenerator.Models;
+using IoTConfigurator.Models;
 using ESP32FormGenerator.Services;
 using Xamarin.Forms;
 using XF.Material.Forms.UI.Dialogs;
