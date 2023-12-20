@@ -8,7 +8,7 @@
     <TemplateGuid>{c9e5eea5-ca05-42a1-839b-61506e0a37df}</TemplateGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ESP32FormGenerator.Droid</RootNamespace>
-    <AssemblyName>FormGenerator.Android</AssemblyName>
+    <AssemblyName>IoTConfigurator.Android</AssemblyName>
     <Deterministic>True</Deterministic>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
@@ -186,9 +186,9 @@
     <Folder Include="Resources\mipmap-xxxhdpi\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FormGenerator\FormGenerator.csproj">
+    <ProjectReference Include="..\IoTConfigurator\IoTConfigurator.csproj">
       <Project>{ad38014e-7739-426a-bdbb-a8163d57f8f0}</Project>
-      <Name>FormGenerator</Name>
+      <Name>IoTConfigurator</Name>
     </ProjectReference>
   </ItemGroup>
  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

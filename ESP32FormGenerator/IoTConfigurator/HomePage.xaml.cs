@@ -7,7 +7,7 @@ using ESP32FormGenerator.Services;
 using Xamarin.Forms;
 using XF.Material.Forms.UI.Dialogs;
 
-namespace FormGenerator
+namespace IoTConfigurator
 {
     public partial class HomePage : ContentPage
     {

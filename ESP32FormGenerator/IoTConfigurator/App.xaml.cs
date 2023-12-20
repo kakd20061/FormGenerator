@@ -1,5 +1,5 @@
 ﻿using Xamarin.Forms;
-namespace FormGenerator
+namespace IoTConfigurator
 {
     public partial class App : Application
     {

@@ -12,7 +12,7 @@ using Newtonsoft.Json.Serialization;
 using XF.Material.Forms.UI;
 using XF.Material.Forms.UI.Dialogs;
 
-namespace FormGenerator
+namespace IoTConfigurator
 {
     public partial class MainPage : TabbedPage
     {

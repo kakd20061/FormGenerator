@@ -12,7 +12,7 @@ using Android.Widget;
 using Xamarin.Forms;
 using ColorExtensions = Xamarin.Forms.Platform.Android.ColorExtensions;
 
-namespace FormGenerator.Droid
+namespace IoTConfigurator.Droid
 {
     [Activity(Label = "IoT Configurator", Icon = "@mipmap/ic_launcher", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     public class MainActivity : Xamarin.Forms.Platform.Android.FormsAppCompatActivity
